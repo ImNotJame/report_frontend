@@ -66,8 +66,8 @@ export default function DailyReportForm() {
     formState.setIsExportingPDF(true);
     formState.setExportStatus("กำลังเริ่มส่งออกไฟล์ PDF... (Starting PDF export...)");
     try {
-      await formState.uploadCompanyLogo();
-      const updatedFormData = await formState.uploadPendingPhotos();
+      const companyUpdates = await formState.uploadCompanyLogo();
+      const updatedFormData = await formState.uploadPendingPhotos(companyUpdates);
       formState.setExportStatus("กำลังจัดโครงสร้างและสร้างเอกสาร... (Generating document layout...)");
       const docxBlob = await generateDocxBlob(
         updatedFormData,
@@ -100,8 +100,8 @@ export default function DailyReportForm() {
     formState.setIsExportingDocx(true);
     formState.setExportStatus("กำลังเริ่มส่งออกไฟล์ Word... (Starting Word export...)");
     try {
-      await formState.uploadCompanyLogo();
-      const updatedFormData = await formState.uploadPendingPhotos();
+      const companyUpdates = await formState.uploadCompanyLogo();
+      const updatedFormData = await formState.uploadPendingPhotos(companyUpdates);
       formState.setExportStatus("กำลังประกอบและสร้างเอกสาร Word... (Assembling Word document...)");
       const out = await generateDocxBlob(
         updatedFormData,

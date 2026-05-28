@@ -256,6 +256,8 @@ export function useDailyReportForm() {
   const uploadCompanyLogo = async () => {
     try {
       let targetCompanyId = formData.companyId;
+      let newCompanyName = formData.companyName;
+      let uploadedLogoUrl = null;
 
       // If "ADD_NEW", create company first
       if (formData.companyId === "ADD_NEW" && formData.companyName) {
@@ -268,9 +270,10 @@ export function useDailyReportForm() {
         if (!createRes.ok) throw new Error("Failed to create company");
         const newCompany = await createRes.json();
         targetCompanyId = newCompany.c_id;
+        newCompanyName = newCompany.c_name;
 
         // Update formData to point to new company
-        setFormData(prev => ({ ...prev, companyId: targetCompanyId }));
+        setFormData(prev => ({ ...prev, companyId: targetCompanyId, companyName: newCompanyName }));
         // Refresh companies list
         fetch(`${API_BASE_URL}/companies`).then(res => res.json()).then(data => setCompaniesList(data));
       }
@@ -288,16 +291,31 @@ export function useDailyReportForm() {
         if (!response.ok) {
           throw new Error("Failed to upload company logo");
         }
-        return await response.json();
+        const logoData = await response.json();
+        uploadedLogoUrl = logoData.cl_file_url || `${API_BASE_URL}/get_logo/${targetCompanyId}`;
+        if (uploadedLogoUrl.startsWith("/")) {
+          uploadedLogoUrl = `${API_BASE_URL}${uploadedLogoUrl}`;
+        }
+        setFormData(prev => ({ ...prev, CL: uploadedLogoUrl }));
       }
+
+      return {
+        companyId: targetCompanyId,
+        companyName: newCompanyName,
+        CL: uploadedLogoUrl || formData.CL
+      };
     } catch (err) {
       console.error("Error in company logo workflow:", err);
       // We don't throw here to avoid crashing the PDF export
     }
-    return null;
+    return {
+      companyId: formData.companyId,
+      companyName: formData.companyName,
+      CL: formData.CL
+    };
   };
 
-  const uploadPendingPhotos = async () => {
+  const uploadPendingPhotos = async (companyUpdates = {}) => {
     const updatedPhotos = [];
     const pendingPhotosCount = formData.photos.filter(p => p.file).length;
     let uploadedCount = 0;
@@ -335,8 +353,16 @@ export function useDailyReportForm() {
       }
     }
 
-    setFormData((prev) => ({ ...prev, photos: updatedPhotos }));
-    return { ...formData, photos: updatedPhotos };
+    setFormData((prev) => ({
+      ...prev,
+      ...companyUpdates,
+      photos: updatedPhotos
+    }));
+    return {
+      ...formData,
+      ...companyUpdates,
+      photos: updatedPhotos
+    };
   };
 
   const removePhoto = (index) => {
