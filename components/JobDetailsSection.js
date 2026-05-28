@@ -79,6 +79,7 @@ export default function JobDetailsSection({
                       onInput={autoResize}
                       rows={1}
                       placeholder="..."
+                      maxLength={500}
                       style={{ minHeight: "40px", background: "#f8fafc" }}
                     />
                   </div>
@@ -106,6 +107,7 @@ export default function JobDetailsSection({
                       onInput={autoResize}
                       rows={1}
                       placeholder="..."
+                      maxLength={500}
                       style={{ minHeight: "40px", background: "#f8fafc" }}
                     />
                   </div>

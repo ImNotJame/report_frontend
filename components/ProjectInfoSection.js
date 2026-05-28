@@ -10,6 +10,7 @@ export default function ProjectInfoSection({ formData, handleChange }) {
             value={formData.projectName}
             onChange={handleChange}
             placeholder="ระบุชื่อโครงการ..."
+            maxLength={100}
           />
         </div>
         <div className="form-group">
@@ -45,7 +46,7 @@ export default function ProjectInfoSection({ formData, handleChange }) {
           </select>
         </div>
       </div>
-      
+
       <div className="form-group" style={{ marginTop: "1rem" }}>
         <label>หมายเหตุ (Remarks)</label>
         <textarea

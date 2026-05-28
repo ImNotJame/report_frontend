@@ -100,7 +100,7 @@ export default function CompanyLogoSection({
                 id="companyName"
                 name="companyName"
                 value={formData.companyName || ""}
-                onChange={handleCompanyChange}
+                onChange={handleChange}
                 placeholder="Enter new company name..."
                 className="input-field"
                 style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}
