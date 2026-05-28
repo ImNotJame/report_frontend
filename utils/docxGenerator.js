@@ -97,17 +97,20 @@ const fetchImageAsDataUrl = async (url) => {
 const isDataUrl = (value) =>
   typeof value === "string" && value.startsWith("data:");
 
-const isHttpUrl = (value) =>
-  typeof value === "string" && /^https?:\/\//i.test(value);
+const isFetchableUrl = (value) =>
+  typeof value === "string" && (value.startsWith("blob:") || /^https?:\/\//i.test(value));
 
 const resolveRemoteImage = async (url) => {
   if (!url) return null;
   if (isDataUrl(url)) return url;
-  if (!isHttpUrl(url)) return null;
+  if (!isFetchableUrl(url)) return null;
 
   try {
     return await fetchImageAsDataUrl(url);
   } catch (err) {
+    if (url.startsWith("blob:")) {
+      throw err;
+    }
     const proxyUrl = getR2ProxyUrl(url);
     if (!proxyUrl) {
       throw err;
@@ -205,8 +208,10 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
     BLANK_IMAGE_DATA_URL;
 
   const resolvedCompanyLogo =
-    (await resolveImageSource(formData.CL, "companyLogo")) ||
-    BLANK_IMAGE_DATA_URL;
+    (await resolveImageSource(
+      formData.companyLogo?.preview || formData.CL,
+      "companyLogo"
+    )) || BLANK_IMAGE_DATA_URL;
 
   const response = await fetch("/template_v15.docx");
   if (!response.ok) throw new Error("Template not found");
