@@ -43,6 +43,7 @@ export function useDailyReportForm() {
   const [isPreviewPdfLoading, setIsPreviewPdfLoading] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isExportingDocx, setIsExportingDocx] = useState(false);
+  const [isUploadingConfirm, setIsUploadingConfirm] = useState(false);
   const [exportStatus, setExportStatus] = useState("");
   const [companiesList, setCompaniesList] = useState([]);
 
@@ -111,12 +112,19 @@ export function useDailyReportForm() {
         alert("กรุณารอสักครู่ กำลังสร้างไฟล์ PDF... (Please wait, PDF is generating...)");
         return;
       }
+      setIsUploadingConfirm(true);
+      setExportStatus("กำลังเตรียมตัวบันทึกข้อมูลและอัปโหลดไฟล์... (Preparing upload...)");
       try {
+        // Defer actual uploads to R2 to only happen on confirm
+        const companyUpdates = await uploadCompanyLogo();
+        const updatedFormData = await uploadPendingPhotos(companyUpdates);
+
+        setExportStatus("กำลังบันทึกประวัติรายงาน... (Saving report history...)");
         await recordWorkSessionExport(
           buildWorkSessionExportPayload({
             exportType: exportTarget,
             filename: previewFilename,
-            formData,
+            formData: updatedFormData,
             plans,
             jobEntries,
           })
@@ -131,6 +139,9 @@ export function useDailyReportForm() {
       } catch (err) {
         console.error("Failed to store work session:", err);
         alert("Failed to store work session: " + err.message);
+      } finally {
+        setIsUploadingConfirm(false);
+        setExportStatus("");
       }
     }
   };
@@ -296,7 +307,11 @@ export function useDailyReportForm() {
         if (uploadedLogoUrl.startsWith("/")) {
           uploadedLogoUrl = `${API_BASE_URL}${uploadedLogoUrl}`;
         }
-        setFormData(prev => ({ ...prev, CL: uploadedLogoUrl }));
+        setFormData(prev => ({
+          ...prev,
+          CL: uploadedLogoUrl,
+          companyLogo: prev.companyLogo ? { ...prev.companyLogo, file: null } : null
+        }));
       }
 
       return {
@@ -532,6 +547,8 @@ export function useDailyReportForm() {
     setIsExportingPDF,
     isExportingDocx,
     setIsExportingDocx,
+    isUploadingConfirm,
+    setIsUploadingConfirm,
     exportStatus,
     setExportStatus,
     handleChange,

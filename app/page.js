@@ -64,13 +64,10 @@ export default function DailyReportForm() {
 
   const handleExportPDF = async () => {
     formState.setIsExportingPDF(true);
-    formState.setExportStatus("กำลังเริ่มส่งออกไฟล์ PDF... (Starting PDF export...)");
+    formState.setExportStatus("กำลังจัดโครงสร้างและสร้างเอกสาร... (Generating document layout...)");
     try {
-      const companyUpdates = await formState.uploadCompanyLogo();
-      const updatedFormData = await formState.uploadPendingPhotos(companyUpdates);
-      formState.setExportStatus("กำลังจัดโครงสร้างและสร้างเอกสาร... (Generating document layout...)");
       const docxBlob = await generateDocxBlob(
-        updatedFormData,
+        formState.formData,
         formState.plans,
         formState.jobEntries
       );
@@ -78,7 +75,7 @@ export default function DailyReportForm() {
       formState.setExportTarget("pdf");
       formState.setPreviewBlob(docxBlob);
       formState.setPreviewFilename(
-        `Daily_Report_${updatedFormData.workDate}.pdf`
+        `Daily_Report_${formState.formData.workDate}.pdf`
       );
     } catch (error) {
       if (error.properties && error.properties.errors) {
@@ -100,11 +97,9 @@ export default function DailyReportForm() {
     formState.setIsExportingDocx(true);
     formState.setExportStatus("กำลังเริ่มส่งออกไฟล์ Word... (Starting Word export...)");
     try {
-      const companyUpdates = await formState.uploadCompanyLogo();
-      const updatedFormData = await formState.uploadPendingPhotos(companyUpdates);
       formState.setExportStatus("กำลังประกอบและสร้างเอกสาร Word... (Assembling Word document...)");
       const out = await generateDocxBlob(
-        updatedFormData,
+        formState.formData,
         formState.plans,
         formState.jobEntries
       );
@@ -112,7 +107,7 @@ export default function DailyReportForm() {
       formState.setExportTarget("docx");
       formState.setPreviewBlob(out);
       formState.setPreviewFilename(
-        `Daily_Report_${updatedFormData.workDate}.docx`
+        `Daily_Report_${formState.formData.workDate}.docx`
       );
     } catch (error) {
       if (error.properties && error.properties.errors) {
@@ -372,6 +367,8 @@ export default function DailyReportForm() {
           confirmDownload={formState.confirmDownload}
           previewPdfUrl={formState.previewPdfUrl}
           isPreviewPdfLoading={formState.isPreviewPdfLoading}
+          isUploadingConfirm={formState.isUploadingConfirm}
+          exportStatus={formState.exportStatus}
         />
       </div>
     </div>

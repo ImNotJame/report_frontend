@@ -8,6 +8,8 @@ export default function DocxPreviewModal({
   confirmDownload,
   previewPdfUrl,
   isPreviewPdfLoading,
+  isUploadingConfirm = false,
+  exportStatus = "",
 }) {
   if (!previewBlob) return null;
 
@@ -159,19 +161,42 @@ export default function DocxPreviewModal({
               setPreviewFilename("");
             }}
             style={{ borderRadius: "12px" }}
+            disabled={isUploadingConfirm}
           >
             ย้อนกลับไปแก้ไข (Cancel)
           </button>
           <button
             className="btn btn-primary"
             onClick={confirmDownload}
+            disabled={isUploadingConfirm}
             style={{
               borderRadius: "12px",
               background:
                 "linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%)",
             }}
           >
-            <FileDown size={18} /> ยืนยันดาวน์โหลดเอกสาร (Confirm Download)
+            {isUploadingConfirm ? (
+              <>
+                <div
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    border: "2px solid rgba(255,255,255,0.2)",
+                    borderTop: "2px solid white",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                    display: "inline-block",
+                    marginRight: "8px",
+                    verticalAlign: "middle"
+                  }}
+                />
+                {exportStatus || "กำลังบันทึกข้อมูล... (Uploading...)"}
+              </>
+            ) : (
+              <>
+                <FileDown size={18} /> ยืนยันดาวน์โหลดเอกสาร (Confirm Download)
+              </>
+            )}
           </button>
         </div>
       </div>
