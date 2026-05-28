@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { AlertCircle, Plus, MapPin, User, Trash2 } from "lucide-react";
 
 export default function JobDetailsSection({
@@ -7,6 +7,23 @@ export default function JobDetailsSection({
   removeJobEntry,
   handleJobEntryChange,
 }) {
+  const tbodyRef = useRef(null);
+  const prevLengthRef = useRef(jobEntries.length);
+
+  useEffect(() => {
+    if (jobEntries.length > prevLengthRef.current) {
+      const rows = tbodyRef.current?.querySelectorAll("tr");
+      if (rows && rows.length > 0) {
+        const lastRow = rows[rows.length - 1];
+        const textarea = lastRow.querySelector("textarea");
+        if (textarea) {
+          textarea.focus();
+        }
+      }
+    }
+    prevLengthRef.current = jobEntries.length;
+  }, [jobEntries.length]);
+
   const autoResize = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = e.target.scrollHeight + "px";
@@ -40,7 +57,7 @@ export default function JobDetailsSection({
             <th style={{ width: "60px" }}></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody ref={tbodyRef}>
           {jobEntries.map((entry, index) => (
             <tr key={entry.id}>
               <td

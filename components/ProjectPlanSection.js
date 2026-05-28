@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Calendar, Plus, MapPin, Trash2 } from "lucide-react";
 
 export default function ProjectPlanSection({
@@ -11,6 +11,48 @@ export default function ProjectPlanSection({
   handlePlanChange,
   handleTaskChange,
 }) {
+  const totalTasks = plans.reduce((sum, p) => sum + (p.tasks?.length || 0), 0);
+  const tbodyRef = useRef(null);
+  const prevPlansLength = useRef(plans.length);
+  const prevTotalTasks = useRef(totalTasks);
+
+  useEffect(() => {
+    // 1. If a new location was added
+    if (plans.length > prevPlansLength.current) {
+      const rows = tbodyRef.current?.querySelectorAll("tr");
+      if (rows && rows.length > 0) {
+        // Search bottom-up for the last location name textarea
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const textarea = rows[i].querySelector("div > textarea");
+          if (textarea) {
+            textarea.focus();
+            break;
+          }
+        }
+      }
+    }
+    // 2. If a new task was added
+    else if (totalTasks > prevTotalTasks.current) {
+      const rows = tbodyRef.current?.querySelectorAll("tr");
+      if (rows && rows.length > 0) {
+        // Search bottom-up for the last task name textarea (indent padding of 2.5rem)
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const td = rows[i].querySelector("td");
+          if (td && td.style.paddingLeft === "2.5rem") {
+            const textarea = td.querySelector("textarea");
+            if (textarea) {
+              textarea.focus();
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    prevPlansLength.current = plans.length;
+    prevTotalTasks.current = totalTasks;
+  }, [plans.length, totalTasks]);
+
   const getDaysDiff = (start, end) => {
     if (!start || !end) return 0;
     const startDate = new Date(start);
@@ -53,7 +95,7 @@ export default function ProjectPlanSection({
             <th style={{ width: "80px", textAlign: "center" }}></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody ref={tbodyRef}>
           {plans.map((plan) => (
             <React.Fragment key={plan.id}>
               <tr style={{ backgroundColor: "#f8fafc" }}>

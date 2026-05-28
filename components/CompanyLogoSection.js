@@ -102,6 +102,7 @@ export default function CompanyLogoSection({
                 value={formData.companyName || ""}
                 onChange={handleChange}
                 placeholder="Enter new company name..."
+                autoFocus
                 className="input-field"
                 style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}
               />
