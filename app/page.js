@@ -94,6 +94,7 @@ export default function DailyReportForm() {
   };
 
   const handleExportDocx = async () => {
+    formState.setIsExportingDocx(true);
     try {
       await formState.uploadCompanyLogo();
       const updatedFormData = await formState.uploadPendingPhotos();
@@ -118,6 +119,8 @@ export default function DailyReportForm() {
         console.error("Docxtemplater Error:", error);
         alert("Failed to generate DOCX. Check console for details.");
       }
+    } finally {
+      formState.setIsExportingDocx(false);
     }
   };
 
@@ -260,6 +263,80 @@ export default function DailyReportForm() {
                   }}
                 >
                   กำลังสร้างไฟล์ PDF...
+                </h3>
+                <p
+                  style={{
+                    margin: 0,
+                    color: "var(--text-secondary, #64748b)",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  กรุณารอสักครู่ (Please wait)
+                </p>
+              </div>
+            </div>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        )}
+
+        {/* DOCX Export Loading Overlay */}
+        {formState.isExportingDocx && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(15, 23, 42, 0.75)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 9999,
+              animation: "fadeIn 0.3s ease-out",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "1.5rem",
+                background: "var(--surface-color, #ffffff)",
+                padding: "2.5rem 3rem",
+                borderRadius: "24px",
+                color: "var(--text-primary, #1e293b)",
+                boxShadow:
+                  "var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1))",
+              }}
+            >
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  border: "4px solid #e2e8f0",
+                  borderTop: "4px solid var(--primary-color, #4875B8)",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite",
+                }}
+              ></div>
+              <div style={{ textAlign: "center" }}>
+                <h3
+                  style={{
+                    margin: "0 0 0.5rem 0",
+                    fontSize: "1.25rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  กำลังสร้างไฟล์ Word...
                 </h3>
                 <p
                   style={{
