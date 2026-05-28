@@ -60,9 +60,9 @@ export default function CompanyLogoSection({
               ))}
               <option value="ADD_NEW">+ เพิ่มบริษัทใหม่ (Add new company)</option>
             </select>
-            
+
             {!isNewCompany && formData.companyId && formData.CL && (
-              <div 
+              <div
                 style={{
                   width: "46px",
                   height: "46px",
@@ -76,9 +76,9 @@ export default function CompanyLogoSection({
                   boxShadow: "var(--shadow-sm)"
                 }}
               >
-                <img 
-                  src={formData.CL} 
-                  alt="Company Logo" 
+                <img
+                  src={formData.CL}
+                  alt="Company Logo"
                   style={{ width: "100%", height: "100%", objectFit: "contain" }}
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
@@ -101,7 +101,7 @@ export default function CompanyLogoSection({
                 name="companyName"
                 value={formData.companyName || ""}
                 onChange={handleChange}
-                placeholder="Enter new company name..."
+                placeholder="กรุณากรอกชื่อบริษัทใหม่..."
                 autoFocus
                 className="input-field"
                 style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}
