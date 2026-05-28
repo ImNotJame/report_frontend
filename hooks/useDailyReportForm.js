@@ -43,6 +43,7 @@ export function useDailyReportForm() {
   const [isPreviewPdfLoading, setIsPreviewPdfLoading] = useState(false);
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isExportingDocx, setIsExportingDocx] = useState(false);
+  const [exportStatus, setExportStatus] = useState("");
   const [companiesList, setCompaniesList] = useState([]);
 
   useEffect(() => {
@@ -258,6 +259,7 @@ export function useDailyReportForm() {
 
       // If "ADD_NEW", create company first
       if (formData.companyId === "ADD_NEW" && formData.companyName) {
+        setExportStatus("กำลังสร้างบริษัทใหม่... (Creating new company...)");
         const createRes = await fetch(`${API_BASE_URL}/add_company`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -275,6 +277,7 @@ export function useDailyReportForm() {
 
       // Then upload logo if present
       if (formData.companyLogo && formData.companyLogo.file && targetCompanyId && targetCompanyId !== "ADD_NEW") {
+        setExportStatus("กำลังอัปโหลดโลโก้บริษัท... (Uploading company logo...)");
         const uploadData = new FormData();
         uploadData.append("file", formData.companyLogo.file);
 
@@ -296,8 +299,13 @@ export function useDailyReportForm() {
 
   const uploadPendingPhotos = async () => {
     const updatedPhotos = [];
+    const pendingPhotosCount = formData.photos.filter(p => p.file).length;
+    let uploadedCount = 0;
+
     for (const photo of formData.photos) {
       if (photo.file) {
+        uploadedCount++;
+        setExportStatus(`กำลังอัปโหลดรูปภาพงาน (รูปที่ ${uploadedCount} จาก ${pendingPhotosCount})... (Uploading photo ${uploadedCount} of ${pendingPhotosCount}...)`);
         const formDataUpload = new FormData();
         formDataUpload.append("file", photo.file);
         try {
@@ -498,6 +506,8 @@ export function useDailyReportForm() {
     setIsExportingPDF,
     isExportingDocx,
     setIsExportingDocx,
+    exportStatus,
+    setExportStatus,
     handleChange,
     handleCompanyChange,
     getWorkerCount,

@@ -64,14 +64,17 @@ export default function DailyReportForm() {
 
   const handleExportPDF = async () => {
     formState.setIsExportingPDF(true);
+    formState.setExportStatus("กำลังเริ่มส่งออกไฟล์ PDF... (Starting PDF export...)");
     try {
       await formState.uploadCompanyLogo();
       const updatedFormData = await formState.uploadPendingPhotos();
+      formState.setExportStatus("กำลังจัดโครงสร้างและสร้างเอกสาร... (Generating document layout...)");
       const docxBlob = await generateDocxBlob(
         updatedFormData,
         formState.plans,
         formState.jobEntries
       );
+      formState.setExportStatus("กำลังเตรียมตัวอย่าง PDF... (Preparing PDF preview...)");
       formState.setExportTarget("pdf");
       formState.setPreviewBlob(docxBlob);
       formState.setPreviewFilename(
@@ -95,14 +98,17 @@ export default function DailyReportForm() {
 
   const handleExportDocx = async () => {
     formState.setIsExportingDocx(true);
+    formState.setExportStatus("กำลังเริ่มส่งออกไฟล์ Word... (Starting Word export...)");
     try {
       await formState.uploadCompanyLogo();
       const updatedFormData = await formState.uploadPendingPhotos();
+      formState.setExportStatus("กำลังประกอบและสร้างเอกสาร Word... (Assembling Word document...)");
       const out = await generateDocxBlob(
         updatedFormData,
         formState.plans,
         formState.jobEntries
       );
+      formState.setExportStatus("กำลังจัดทำไฟล์เพื่อเปิดตัวอย่าง... (Preparing preview...)");
       formState.setExportTarget("docx");
       formState.setPreviewBlob(out);
       formState.setPreviewFilename(
@@ -271,7 +277,7 @@ export default function DailyReportForm() {
                     fontSize: "0.9rem",
                   }}
                 >
-                  กรุณารอสักครู่ (Please wait)
+                  {formState.exportStatus || "กรุณารอสักครู่ (Please wait)"}
                 </p>
               </div>
             </div>
@@ -345,7 +351,7 @@ export default function DailyReportForm() {
                     fontSize: "0.9rem",
                   }}
                 >
-                  กรุณารอสักครู่ (Please wait)
+                  {formState.exportStatus || "กรุณารอสักครู่ (Please wait)"}
                 </p>
               </div>
             </div>
