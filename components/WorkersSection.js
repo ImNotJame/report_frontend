@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 function WorkerInput({ name, addWorker, existingWorkers = [] }) {
   const [inputValue, setInputValue] = useState("");

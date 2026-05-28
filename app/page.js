@@ -17,7 +17,7 @@ import SignatureSection from "../components/SignatureSection";
 import DocxPreviewModal from "../components/DocxPreviewModal";
 import CompanyLogoSection from "@/components/CompanyLogoSection";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(/\/+$/, "");
 const PDF_RETRY_DELAYS_MS = [600, 1500];
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
