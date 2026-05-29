@@ -185,6 +185,7 @@ export default function ProjectPlanSection({
                     <input
                       type="date"
                       value={task.startDate}
+                      max={formData.workDate}
                       onChange={(e) =>
                         handleTaskChange(
                           plan.id,
@@ -218,8 +219,8 @@ export default function ProjectPlanSection({
                   <td style={{ textAlign: "center" }}>
                     <span
                       className={`days-badge ${getDaysDiff(formData.workDate, task.endDate) < 3
-                          ? "danger"
-                          : ""
+                        ? "danger"
+                        : ""
                         }`}
                     >
                       {getDaysDiff(formData.workDate, task.endDate)}

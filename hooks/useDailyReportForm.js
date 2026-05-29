@@ -448,9 +448,15 @@ export function useDailyReportForm() {
             ...p,
             tasks: p.tasks.map((t) => {
               if (t.id === taskId) {
-                // If setting a start date that is after the existing end date, auto-adjust end date
-                if (field === "startDate" && t.endDate && value > t.endDate) {
-                  return { ...t, startDate: value, endDate: value };
+                // If setting a start date that is after work date, auto-correct to work date
+                if (field === "startDate") {
+                  if (value > formData.workDate) {
+                    value = formData.workDate;
+                  }
+                  // If setting a start date that is after the existing end date, auto-adjust end date
+                  if (t.endDate && value > t.endDate) {
+                    return { ...t, startDate: value, endDate: value };
+                  }
                 }
                 // If setting an end date that is before start date or before work date, auto-correct to the maximum allowed date
                 if (field === "endDate") {
