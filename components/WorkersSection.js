@@ -7,6 +7,10 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+  const [currentDepId, setCurrentDepId] = useState(null);
+  
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingWorkerName, setPendingWorkerName] = useState("");
 
   const deptBackendName = {
     "workersForeman": "Foreman",
@@ -24,6 +28,7 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
       if (!depRes.ok) return;
       const depId = await depRes.json();
       const cleanDepId = String(depId).replace(/"/g, "");
+      setCurrentDepId(cleanDepId);
 
       const workersRes = await fetch(`${API_BASE_URL}/get_all_by_department_id?data=${cleanDepId}`);
       if (!workersRes.ok) return;
@@ -40,18 +45,120 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
     return fullName.toLowerCase().includes(inputValue.toLowerCase());
   });
 
-  const handleAdd = (val) => {
+  const handleAdd = async (val) => {
     if (!val.trim()) return;
+
+    const exactMatch = suggestions.some((w) => {
+      const fullName = `${w.w_firstname} ${w.w_lastname}`.trim();
+      return fullName.toLowerCase() === val.trim().toLowerCase();
+    });
+
+    if (!exactMatch) {
+      setPendingWorkerName(val.trim());
+      setShowConfirmModal(true);
+      return;
+    }
+
     addWorker(name, val.trim());
     setInputValue("");
     setIsFocused(false);
   };
 
+  const confirmAddNewWorker = async () => {
+    const val = pendingWorkerName;
+    const parts = val.trim().split(" ");
+    const firstName = parts[0];
+    const lastName = parts.length > 1 ? parts.slice(1).join(" ") : "";
+
+    let targetDepId = currentDepId;
+    if (!targetDepId) {
+      try {
+        const depRes = await fetch(`${API_BASE_URL}/get_id_by_name?name=${deptBackendName}`);
+        if (depRes.ok) {
+          const depId = await depRes.json();
+          targetDepId = String(depId).replace(/"/g, "");
+          setCurrentDepId(targetDepId);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const payload = {
+      w_firstname: firstName,
+      w_lastname: lastName,
+      department_id: targetDepId || null
+    };
+
+    try {
+      const addRes = await fetch(`${API_BASE_URL}/add_worker`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!addRes.ok) {
+        throw new Error("Failed to add worker");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("ไม่สามารถเพิ่มพนักงานใหม่ได้ (Failed to add new worker)");
+      setShowConfirmModal(false);
+      return;
+    }
+
+    addWorker(name, val.trim());
+    setInputValue("");
+    setIsFocused(false);
+    fetchWorkers();
+    setShowConfirmModal(false);
+    setPendingWorkerName("");
+  };
+
+  const hasExactMatch = suggestions.some(w => `${w.w_firstname} ${w.w_lastname}`.trim().toLowerCase() === inputValue.trim().toLowerCase());
+
   return (
     <div style={{ position: "relative", width: "100%" }}>
+      {showConfirmModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100%", 
+          backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999,
+          display: "flex", justifyContent: "center", alignItems: "center"
+        }}>
+          <div style={{
+            background: "white", padding: "2rem", borderRadius: "8px", 
+            width: "350px", textAlign: "center", boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+          }}>
+            <h3 style={{ marginBottom: "1rem", color: "#333", fontSize: "1.2rem", fontWeight: "600" }}>ยืนยันการเพิ่มพนักงาน</h3>
+            <p style={{ marginBottom: "1.5rem", color: "#555", fontSize: "1rem" }}>
+              คุณต้องการเพิ่มพนักงานใหม่<br/>
+              <strong style={{ fontSize: "1.1rem", color: "var(--primary-color)", display: "inline-block", marginTop: "0.5rem" }}>"{pendingWorkerName}"</strong><br/>
+              หรือไม่?
+            </p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
+              <button 
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setPendingWorkerName("");
+                }}
+                style={{ padding: "0.5rem 1.2rem", border: "1px solid #e2e8f0", borderRadius: "6px", background: "#f8fafc", cursor: "pointer", color: "#475569", fontWeight: "500" }}
+              >
+                ยกเลิก
+              </button>
+              <button 
+                onClick={confirmAddNewWorker}
+                style={{ padding: "0.5rem 1.2rem", border: "none", borderRadius: "6px", background: "var(--primary-color)", color: "white", cursor: "pointer", fontWeight: "500" }}
+              >
+                ยืนยัน
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <input
         type="text"
-        placeholder="พิมพ์ชื่อแล้วกด Enter..."
+        placeholder="ค้นหาหรือพิมพ์ชื่อพนักงาน..."
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onFocus={() => {
@@ -59,12 +166,6 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
           fetchWorkers();
         }}
         onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handleAdd(inputValue);
-          }
-        }}
         style={{
           width: "100%",
           border: "none",
@@ -74,7 +175,7 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
           fontSize: "0.9rem",
         }}
       />
-      {isFocused && inputValue.trim().length > 0 && filteredSuggestions.length > 0 && (
+      {isFocused && inputValue.trim().length > 0 && (filteredSuggestions.length > 0 || !hasExactMatch) && (
         <ul
           style={{
             position: "absolute",
@@ -112,6 +213,23 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
               </li>
             );
           })}
+          {!hasExactMatch && (
+            <li
+              onMouseDown={() => handleAdd(inputValue)}
+              style={{
+                padding: "0.4rem 0.8rem",
+                cursor: "pointer",
+                fontSize: "0.9rem",
+                color: "var(--primary-color)",
+                fontWeight: "500",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+              onMouseEnter={(e) => (e.target.style.background = "#f8fafc")}
+              onMouseLeave={(e) => (e.target.style.background = "white")}
+            >
+              + เพิ่มพนักงานใหม่ "{inputValue.trim()}"
+            </li>
+          )}
         </ul>
       )}
     </div>
@@ -181,11 +299,14 @@ export default function WorkersSection({
                         padding: "0.2rem 0.6rem",
                         background: "var(--primary-color)",
                         color: "white",
-                        cursor: "pointer",
                       }}
-                      onClick={() => removeWorker(name, idx)}
                     >
-                      {worker} <Trash2 size={10} />
+                      {worker}{" "}
+                      <Trash2
+                        size={12}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => removeWorker(name, idx)}
+                      />
                     </span>
                   ))}
                 </div>
