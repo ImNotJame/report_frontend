@@ -419,7 +419,7 @@ export function useDailyReportForm() {
             const b = data[i + 2];
             const a = data[i + 3];
             const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-            
+
             // If the pixel is transparent (alpha < 128) or light-colored (gray > threshold),
             // convert it to solid white. Otherwise, convert it to solid black.
             if (a < 128 || gray > threshold) {
@@ -448,7 +448,7 @@ export function useDailyReportForm() {
       ...plans,
       {
         id: Date.now(),
-        locationName: "สถานที่ใหม่",
+        locationName: "",
         startDate: formData.workDate,
         endDate: formData.workDate,
         tasks: [],
@@ -470,7 +470,7 @@ export function useDailyReportForm() {
               ...p.tasks,
               {
                 id: Date.now(),
-                name: "งานใหม่",
+                name: "",
                 startDate: formData.workDate,
                 endDate: formData.workDate,
               },
@@ -503,7 +503,23 @@ export function useDailyReportForm() {
         if (p.id === locationId) {
           return {
             ...p,
-            tasks: p.tasks.map((t) => (t.id === taskId ? { ...t, [field]: value } : t)),
+            tasks: p.tasks.map((t) => {
+              if (t.id === taskId) {
+                // If setting a start date that is after the existing end date, auto-adjust end date
+                if (field === "startDate" && t.endDate && value > t.endDate) {
+                  return { ...t, startDate: value, endDate: value };
+                }
+                // If setting an end date that is before start date or before work date, auto-correct to the maximum allowed date
+                if (field === "endDate") {
+                  const minAllowed = !t.startDate || formData.workDate > t.startDate ? formData.workDate : t.startDate;
+                  if (value < minAllowed) {
+                    return { ...t, endDate: minAllowed };
+                  }
+                }
+                return { ...t, [field]: value };
+              }
+              return t;
+            }),
           };
         }
         return p;

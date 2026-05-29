@@ -97,7 +97,7 @@ export default function JobDetailsSection({
                       rows={1}
                       placeholder="..."
                       maxLength={500}
-                      style={{ minHeight: "40px", background: "#f8fafc" }}
+                      style={{ minHeight: "40px", background: "#f8fafc", color: "var(--text-primary)", caretColor: "var(--text-primary)" }}
                     />
                   </div>
                   <div
@@ -125,7 +125,7 @@ export default function JobDetailsSection({
                       rows={1}
                       placeholder="..."
                       maxLength={500}
-                      style={{ minHeight: "40px", background: "#f8fafc" }}
+                      style={{ minHeight: "40px", background: "#f8fafc", color: "var(--text-primary)", caretColor: "var(--text-primary)" }}
                     />
                   </div>
                 </div>
@@ -152,6 +152,8 @@ export default function JobDetailsSection({
                       border: "none",
                       background: "transparent",
                       padding: "0.25rem",
+                      color: "var(--text-primary)",
+                      caretColor: "var(--text-primary)",
                     }}
                   />
                 </div>
@@ -178,6 +180,8 @@ export default function JobDetailsSection({
                       border: "none",
                       background: "transparent",
                       padding: "0.25rem",
+                      color: "var(--text-primary)",
+                      caretColor: "var(--text-primary)",
                     }}
                   />
                 </div>

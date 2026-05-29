@@ -117,6 +117,7 @@ select {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
 }
 
 input:focus,
@@ -180,8 +181,22 @@ textarea {
   font-size: 0.95rem;
 }
 
-.dynamic-table input:focus {
+.dynamic-table input,
+.dynamic-table textarea {
+  color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+  cursor: pointer;
+}
+
+.dynamic-table input:focus,
+.dynamic-table textarea:focus {
+  outline: none;
   background-color: #ffffff;
+  color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(72, 117, 184, 0.15);
+  cursor: pointer;
 }
 
 /* Buttons */

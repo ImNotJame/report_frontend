@@ -247,7 +247,7 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
         return [150, 50]; // Custom signature size in pixels (fits perfect in table)
       }
       if (tagName === "CL") {
-        return [60, 57];
+        return [60, 63];
       }
 
       return [297, 221]; // Standard photo size in pixels

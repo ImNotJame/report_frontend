@@ -115,6 +115,7 @@ export default function ProjectPlanSection({
                       }
                       onInput={autoResize}
                       rows={1}
+                      placeholder="ระบุสถานที่..."
                       style={{
                         fontWeight: "600",
                         border: "none",
@@ -124,6 +125,8 @@ export default function ProjectPlanSection({
                         padding: "0",
                         resize: "none",
                         overflow: "hidden",
+                        color: "var(--text-primary)",
+                        caretColor: "var(--text-primary)",
                       }}
                     />
                   </div>
@@ -164,6 +167,7 @@ export default function ProjectPlanSection({
                       }
                       onInput={autoResize}
                       rows={1}
+                      placeholder="ระบุรายละเอียดงาน..."
                       style={{
                         width: "100%",
                         border: "none",
@@ -172,6 +176,8 @@ export default function ProjectPlanSection({
                         padding: "0",
                         resize: "none",
                         overflow: "hidden",
+                        color: "var(--text-primary)",
+                        caretColor: "var(--text-primary)",
                       }}
                     />
                   </td>
@@ -193,6 +199,7 @@ export default function ProjectPlanSection({
                     <input
                       type="date"
                       value={task.endDate}
+                      min={!task.startDate || formData.workDate > task.startDate ? formData.workDate : task.startDate}
                       onChange={(e) =>
                         handleTaskChange(
                           plan.id,
@@ -210,11 +217,10 @@ export default function ProjectPlanSection({
                   </td>
                   <td style={{ textAlign: "center" }}>
                     <span
-                      className={`days-badge ${
-                        getDaysDiff(formData.workDate, task.endDate) < 3
+                      className={`days-badge ${getDaysDiff(formData.workDate, task.endDate) < 3
                           ? "danger"
                           : ""
-                      }`}
+                        }`}
                     >
                       {getDaysDiff(formData.workDate, task.endDate)}
                     </span>
