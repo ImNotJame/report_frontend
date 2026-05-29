@@ -145,10 +145,12 @@ export default function JobDetailsSection({
                   <textarea
                     value={entry.location}
                     onInput={autoResize}
+                    placeholder="กรอกสถานที่..."
                     onChange={(e) =>
                       handleJobEntryChange(entry.id, "location", e.target.value)
                     }
                     style={{
+
                       border: "none",
                       background: "transparent",
                       padding: "0.25rem",
@@ -173,6 +175,7 @@ export default function JobDetailsSection({
                   <textarea
                     value={entry.executor}
                     onInput={autoResize}
+                    placeholder="กรอกผู้ดำเนินการ..."
                     onChange={(e) =>
                       handleJobEntryChange(entry.id, "executor", e.target.value)
                     }

@@ -19,7 +19,7 @@ export default function PhotoReportSection({
         }}
       >
         <h2 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Camera size={20} /> Photo Report (รูปภาพประกอบ)
+          <Camera size={20} /> รูปภาพประกอบ (Photo Report)
         </h2>
         <label
           className="btn btn-primary"

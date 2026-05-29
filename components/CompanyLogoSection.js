@@ -23,7 +23,7 @@ export default function CompanyLogoSection({
         }}
       >
         <h2 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <ImageIcon size={20} /> Company Logo (โลโก้บริษัท)
+          <ImageIcon size={20} /> โลโก้บริษัท (Company Logo)
         </h2>
       </div>
 

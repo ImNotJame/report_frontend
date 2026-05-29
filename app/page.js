@@ -13,7 +13,6 @@ import ProjectPlanSection from "../components/ProjectPlanSection";
 import JobDetailsSection from "../components/JobDetailsSection";
 import WorkersSection from "../components/WorkersSection";
 import PhotoReportSection from "../components/PhotoReportSection";
-import SignatureSection from "../components/SignatureSection";
 import DocxPreviewModal from "../components/DocxPreviewModal";
 import CompanyLogoSection from "@/components/CompanyLogoSection";
 
@@ -192,14 +191,6 @@ export default function DailyReportForm() {
           handleChange={formState.handleChange}
           handlePhotoUpload={formState.handlePhotoUpload}
           removePhoto={formState.removePhoto}
-        />
-
-
-
-        <SignatureSection
-          formData={formState.formData}
-          setFormData={formState.setFormData}
-          processSignature={formState.processSignature}
         />
 
         <div className="actions-bar" style={{ marginTop: "2rem" }}>

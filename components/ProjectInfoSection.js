@@ -30,6 +30,7 @@ export default function ProjectInfoSection({ formData, handleChange }) {
         <div className="form-group">
           <label>อุปสรรคและเหตุการณ์พิเศษ</label>
           <input
+            placeholder="กรอกรายละเอียด..."
             type="text"
             name="obstacles"
             value={formData.obstacles}

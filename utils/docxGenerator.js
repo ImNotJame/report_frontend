@@ -20,6 +20,18 @@ const getWorkerCount = (names) => {
   return names.split(/[,，\s]+/).filter((n) => n.trim().length > 0).length;
 };
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  const parts = dateStr.split("-");
+  if (parts.length === 3) {
+    const y = parts[0];
+    const m = parts[1];
+    const d = parts[2];
+    return `${d}/${m}/${y.slice(-2)}`;
+  }
+  return dateStr;
+};
+
 const wrapText = (text, limit = 50) => {
   if (!text) return "";
   try {
@@ -201,12 +213,6 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
       return { ...p, data: base64 || BLANK_IMAGE_DATA_URL };
     })
   );
-
-  // Pre-resolve reportedBySig to base64
-  const resolvedReportedBySig =
-    (await resolveImageSource(formData.reportedBySig, "reportedBySig")) ||
-    BLANK_IMAGE_DATA_URL;
-
   const resolvedCompanyLogo =
     (await resolveImageSource(
       formData.companyLogo?.preview || formData.CL,
@@ -243,9 +249,6 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
       }
     },
     getSize: (img, tagValue, tagName) => {
-      if (tagName === "reportedBySig") {
-        return [150, 50]; // Custom signature size in pixels (fits perfect in table)
-      }
       if (tagName === "CL") {
         return [60, 63];
       }
@@ -266,8 +269,8 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
   plans.forEach((p) => {
     flatItems.push({
       name: wrapText(p.locationName, 50),
-      startDate: p.startDate,
-      endDate: p.endDate,
+      startDate: formatDate(p.startDate),
+      endDate: formatDate(p.endDate),
       daysWorked: getDaysDiff(p.startDate, formData.workDate),
       daysRemaining: getDaysDiff(formData.workDate, p.endDate),
       isLocation: true,
@@ -275,8 +278,8 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
     p.tasks.forEach((t) => {
       flatItems.push({
         name: `    ${wrapText(t.name, 45)}`,
-        startDate: t.startDate,
-        endDate: t.endDate,
+        startDate: formatDate(t.startDate),
+        endDate: formatDate(t.endDate),
         daysWorked: getDaysDiff(t.startDate, formData.workDate),
         daysRemaining: getDaysDiff(formData.workDate, t.endDate),
         isLocation: false,
@@ -286,6 +289,7 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
 
   doc.render({
     ...formData,
+    workDate: formatDate(formData.workDate),
     projectName: wrapText(formData.projectName, 60),
     remarks: wrapText(formData.remarks, 80),
     workersRemarks: wrapText(formData.workersRemarks, 80),
@@ -373,9 +377,7 @@ export const generateDocxBlob = async (formData, plans, jobEntries) => {
     A2: resolvedPhotos.length > 0 ? "☑" : "☐",
     hasAttachment: formData.hasAttachment ? "☑" : "☐",
     noAttachment: !formData.hasAttachment ? "☑" : "☐",
-    reportedBySig:
-      resolvedReportedBySig ||
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+    reportedBySig: BLANK_IMAGE_DATA_URL,
 
     CL: resolvedCompanyLogo ||
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="

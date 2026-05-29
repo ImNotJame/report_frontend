@@ -26,7 +26,6 @@ export function useDailyReportForm() {
     workersOthers: [],
     workersRemarks: "",
     reportedBy: "",
-    reportedBySig: "",
     checkedBy: "",
     photos: [], // Array of { data: base64, name: string }
     hasAttachment: false,
@@ -387,62 +386,6 @@ export function useDailyReportForm() {
     }));
   };
 
-  const processSignature = (file) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          const maxWidth = 300;
-          const maxHeight = 100;
-          let width = img.width;
-          let height = img.height;
-          if (width > maxWidth) {
-            height = (maxWidth / width) * height;
-            width = maxWidth;
-          }
-          if (height > maxHeight) {
-            width = (maxHeight / height) * width;
-            height = maxHeight;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-          const imgData = ctx.getImageData(0, 0, width, height);
-          const data = imgData.data;
-          const threshold = 180;
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const a = data[i + 3];
-            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-
-            // If the pixel is transparent (alpha < 128) or light-colored (gray > threshold),
-            // convert it to solid white. Otherwise, convert it to solid black.
-            if (a < 128 || gray > threshold) {
-              data[i] = 255;
-              data[i + 1] = 255;
-              data[i + 2] = 255;
-              data[i + 3] = 255;
-            } else {
-              data[i] = 0;
-              data[i + 1] = 0;
-              data[i + 2] = 0;
-              data[i + 3] = 255;
-            }
-          }
-          ctx.putImageData(imgData, 0, 0);
-          resolve(canvas.toDataURL("image/png"));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
   const addLocation = () => {
     setPlans([
       ...plans,
@@ -578,7 +521,6 @@ export function useDailyReportForm() {
     uploadCompanyLogo,
     uploadPendingPhotos,
     removePhoto,
-    processSignature,
     addLocation,
     removeLocation,
     addTask,
