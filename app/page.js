@@ -125,8 +125,9 @@ export default function DailyReportForm() {
   };
 
   return (
-    <div className="container">
-      <div className="glass-card">
+    <>
+      <div className="container">
+        <div className="glass-card">
         <h1
           style={{
             display: "flex",
@@ -350,18 +351,20 @@ export default function DailyReportForm() {
           </div>
         )}
 
-        {/* Premium DOCX Preview Modal */}
-        <DocxPreviewModal
-          previewBlob={formState.previewBlob}
-          setPreviewBlob={formState.setPreviewBlob}
-          setPreviewFilename={formState.setPreviewFilename}
-          confirmDownload={formState.confirmDownload}
-          previewPdfUrl={formState.previewPdfUrl}
-          isPreviewPdfLoading={formState.isPreviewPdfLoading}
-          isUploadingConfirm={formState.isUploadingConfirm}
-          exportStatus={formState.exportStatus}
-        />
       </div>
     </div>
-  );
+
+    {/* Premium DOCX Preview Modal */}
+    <DocxPreviewModal
+      previewBlob={formState.previewBlob}
+      setPreviewBlob={formState.setPreviewBlob}
+      setPreviewFilename={formState.setPreviewFilename}
+      confirmDownload={formState.confirmDownload}
+      previewPdfUrl={formState.previewPdfUrl}
+      isPreviewPdfLoading={formState.isPreviewPdfLoading}
+      isUploadingConfirm={formState.isUploadingConfirm}
+      exportStatus={formState.exportStatus}
+    />
+  </>
+);
 }

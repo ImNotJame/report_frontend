@@ -107,41 +107,50 @@ export default function DocxPreviewModal({
         <div
           style={{
             flex: 1,
-            overflowY: "auto",
-            background: "#525659",
+            position: "relative",
+            background: "#f8fafc",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            minHeight: 0,
           }}
         >
           {isPreviewPdfLoading ? (
-            <div style={{ textAlign: "center", color: "white" }}>
+            <div style={{ textAlign: "center", color: "var(--text-secondary)" }}>
               <div
                 style={{
                   width: "48px",
                   height: "48px",
-                  border: "4px solid rgba(255,255,255,0.2)",
-                  borderTop: "4px solid white",
+                  border: "4px solid rgba(72, 117, 184, 0.1)",
+                  borderTop: "4px solid var(--primary-color)",
                   borderRadius: "50%",
                   animation: "spin 1s linear infinite",
                   margin: "0 auto 1rem auto",
                 }}
               />
-              <p>กำลังเตรียมตัวอย่าง PDF... (Preparing PDF preview...)</p>
+              <p style={{ fontWeight: 500 }}>
+                กำลังเตรียมตัวอย่างเอกสาร... (Preparing preview...)
+              </p>
             </div>
           ) : previewPdfUrl ? (
             <iframe
-              src={previewPdfUrl}
-              width="100%"
-              height="100%"
-              style={{ border: "none" }}
+              src={`${previewPdfUrl}#toolbar=0&navpanes=0`}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                border: "none",
+              }}
             />
           ) : (
-            <div style={{ color: "white" }}>
+            <div style={{ color: "var(--text-secondary)", fontWeight: 500 }}>
               ไม่สามารถโหลดตัวอย่างได้ (Could not load preview)
             </div>
           )}
         </div>
+
 
         {/* Modal Footer */}
         <div

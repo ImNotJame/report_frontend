@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { GrUserWorker } from "react-icons/gr";
 
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000").replace(/\/+$/, "");
 
@@ -8,7 +9,7 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
   const [currentDepId, setCurrentDepId] = useState(null);
-  
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingWorkerName, setPendingWorkerName] = useState("");
 
@@ -121,22 +122,22 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
     <div style={{ position: "relative", width: "100%" }}>
       {showConfirmModal && (
         <div style={{
-          position: "fixed", top: 0, left: 0, width: "100%", height: "100%", 
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
           backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999,
           display: "flex", justifyContent: "center", alignItems: "center"
         }}>
           <div style={{
-            background: "white", padding: "2rem", borderRadius: "8px", 
+            background: "white", padding: "2rem", borderRadius: "8px",
             width: "350px", textAlign: "center", boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
           }}>
             <h3 style={{ marginBottom: "1rem", color: "#333", fontSize: "1.2rem", fontWeight: "600" }}>ยืนยันการเพิ่มพนักงาน</h3>
             <p style={{ marginBottom: "1.5rem", color: "#555", fontSize: "1rem" }}>
-              คุณต้องการเพิ่มพนักงานใหม่<br/>
-              <strong style={{ fontSize: "1.1rem", color: "var(--primary-color)", display: "inline-block", marginTop: "0.5rem" }}>"{pendingWorkerName}"</strong><br/>
+              คุณต้องการเพิ่มพนักงานใหม่<br />
+              <strong style={{ fontSize: "1.1rem", color: "var(--primary-color)", display: "inline-block", marginTop: "0.5rem" }}>"{pendingWorkerName}"</strong><br />
               หรือไม่?
             </p>
             <div style={{ display: "flex", justifyContent: "center", gap: "1rem" }}>
-              <button 
+              <button
                 onClick={() => {
                   setShowConfirmModal(false);
                   setPendingWorkerName("");
@@ -145,7 +146,7 @@ function WorkerInput({ name, addWorker, existingWorkers = [] }) {
               >
                 ยกเลิก
               </button>
-              <button 
+              <button
                 onClick={confirmAddNewWorker}
                 style={{ padding: "0.5rem 1.2rem", border: "none", borderRadius: "6px", background: "var(--primary-color)", color: "white", cursor: "pointer", fontWeight: "500" }}
               >
@@ -250,7 +251,7 @@ export default function WorkersSection({
 
   return (
     <>
-      <h2 style={{ marginTop: "3rem" }}>ผู้ปฏิบัติงาน (Workers)</h2>
+      <h2 style={{ marginTop: "3rem" }}> <GrUserWorker />ผู้ปฏิบัติงาน (Workers)</h2>
       <table className="dynamic-table" style={{ marginTop: "1rem" }}>
         <thead>
           <tr>
