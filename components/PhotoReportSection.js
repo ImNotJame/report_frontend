@@ -112,7 +112,7 @@ export default function PhotoReportSection({
         ))}
       </div>
 
-      {/* Premium Checkbox Section */}
+
       <div
         style={{
           display: "flex",
@@ -124,7 +124,6 @@ export default function PhotoReportSection({
           padding: "1rem 1.25rem",
           marginTop: "1.5rem",
           marginBottom: "2rem",
-          cursor: "pointer",
           transition: "all 0.2s ease",
           boxShadow: "var(--shadow-sm)",
           width: "fit-content",
@@ -145,11 +144,9 @@ export default function PhotoReportSection({
           }}
         />
         <label
-          htmlFor="hasAttachment"
           style={{
             display: "inline-block",
             margin: 0,
-            cursor: "pointer",
             fontSize: "0.95rem",
             fontWeight: "600",
             color: "var(--text-primary)",
