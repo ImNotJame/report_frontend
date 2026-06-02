@@ -317,6 +317,120 @@ textarea {
   body { background: white; padding: 0; }
   .container { padding: 0; max-width: 100%; }
   .glass-card { box-shadow: none; border: none; padding: 0; }
-  .actions-bar, .btn, .trash-btn { display: none !important; }
+  .actions-bar, .btn, .trash-btn, .stepper-container, .step-navigation { display: none !important; }
   input, textarea { border: none !important; padding: 0 !important; box-shadow: none !important; }
 }
+
+/* Stepper Styles */
+.stepper-container {
+  width: 100%;
+  margin-bottom: 3rem;
+  padding: 0 1rem;
+}
+
+.stepper-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.stepper-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+}
+
+.stepper-item:last-child {
+  flex: 0;
+}
+
+.stepper-step-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.stepper-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  border: 2px solid #cbd5e1;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.stepper-title {
+  position: absolute;
+  top: 48px;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+}
+
+.stepper-divider {
+  flex: 1;
+  height: 2px;
+  background-color: #e2e8f0;
+  margin: 0 1rem;
+  transition: background-color 0.3s ease;
+  transform: translateY(-12px); /* adjust to align with circle center */
+}
+
+.stepper-item.active .stepper-circle {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(72, 117, 184, 0.15);
+}
+
+.stepper-item.active .stepper-title {
+  color: var(--text-primary);
+}
+
+.stepper-item.completed .stepper-circle {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.stepper-item.completed .stepper-title {
+  color: #10b981;
+}
+
+.stepper-item.completed .stepper-divider {
+  background-color: #10b981;
+}
+
+.step-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Hide inactive steps */
+.step-content {
+  display: none;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.step-content.active {
+  display: block;
+}
+

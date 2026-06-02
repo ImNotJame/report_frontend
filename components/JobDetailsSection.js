@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { AlertCircle, Plus, MapPin, User, Trash2 } from "lucide-react";
+import { AlertCircle, Plus, MapPin, User, Trash2, ClipboardList } from "lucide-react";
+import EmptyState from "./EmptyState";
 
 export default function JobDetailsSection({
   jobEntries,
@@ -47,171 +48,181 @@ export default function JobDetailsSection({
         </button>
       </div>
 
-      <table className="dynamic-table">
-        <thead>
-          <tr>
-            <th style={{ width: "60px", textAlign: "center" }}>ลำดับ</th>
-            <th>รายละเอียดการปฏิบัติงาน</th>
-            <th style={{ width: "200px" }}>สถานที่</th>
-            <th style={{ width: "180px" }}>ผู้ดำเนินการ</th>
-            <th style={{ width: "60px" }}></th>
-          </tr>
-        </thead>
-        <tbody ref={tbodyRef}>
-          {jobEntries.map((entry, index) => (
-            <tr key={entry.id}>
-              <td
-                style={{
-                  textAlign: "center",
-                  fontWeight: "600",
-                  verticalAlign: "top",
-                  paddingTop: "1.5rem",
-                }}
-              >
-                {index + 1}
-              </td>
-              <td>
-                <div className="flex-column">
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.25rem",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "0.75rem",
-                        fontWeight: "700",
-                        color: "var(--text-secondary)",
-                      }}
-                    >
-                      รายละเอียดงาน:
-                    </span>
-                    <textarea
-                      value={entry.detail}
-                      onChange={(e) =>
-                        handleJobEntryChange(entry.id, "detail", e.target.value)
-                      }
-                      onInput={autoResize}
-                      rows={1}
-                      placeholder="..."
-                      maxLength={500}
-                      style={{ minHeight: "40px", background: "#f8fafc", color: "var(--text-primary)", caretColor: "var(--text-primary)" }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.25rem",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "0.75rem",
-                        fontWeight: "700",
-                        color: "var(--text-secondary)",
-                      }}
-                    >
-                      ผลการดำเนินการ:
-                    </span>
-                    <textarea
-                      value={entry.result}
-                      onChange={(e) =>
-                        handleJobEntryChange(entry.id, "result", e.target.value)
-                      }
-                      onInput={autoResize}
-                      rows={1}
-                      placeholder="..."
-                      maxLength={500}
-                      style={{ minHeight: "40px", background: "#f8fafc", color: "var(--text-primary)", caretColor: "var(--text-primary)" }}
-                    />
-                  </div>
-                </div>
-              </td>
-              <td style={{ verticalAlign: "top", paddingTop: "1.5rem" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    background: "#f8fafc",
-                    padding: "0.25rem 0.5rem",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <MapPin size={14} color="#64748b" />
-                  <textarea
-                    value={entry.location}
-                    onInput={autoResize}
-                    placeholder="กรอกสถานที่..."
-                    onChange={(e) =>
-                      handleJobEntryChange(entry.id, "location", e.target.value)
-                    }
-                    style={{
-
-                      border: "none",
-                      background: "transparent",
-                      padding: "0.25rem",
-                      color: "var(--text-primary)",
-                      caretColor: "var(--text-primary)",
-                    }}
-                  />
-                </div>
-              </td>
-              <td style={{ verticalAlign: "top", paddingTop: "1.5rem" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    background: "#f8fafc",
-                    padding: "0.25rem 0.5rem",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <User size={14} color="#64748b" />
-                  <textarea
-                    value={entry.executor}
-                    onInput={autoResize}
-                    placeholder="กรอกผู้ดำเนินการ..."
-                    onChange={(e) =>
-                      handleJobEntryChange(entry.id, "executor", e.target.value)
-                    }
-                    style={{
-                      border: "none",
-                      background: "transparent",
-                      padding: "0.25rem",
-                      color: "var(--text-primary)",
-                      caretColor: "var(--text-primary)",
-                    }}
-                  />
-                </div>
-              </td>
-              <td
-                style={{
-                  textAlign: "center",
-                  verticalAlign: "top",
-                  paddingTop: "1.5rem",
-                }}
-              >
-                <button
-                  className="btn btn-danger"
-                  style={{
-                    padding: "0.4rem",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                  onClick={() => removeJobEntry(entry.id)}
-                >
-                  <Trash2 size={16} />
-                </button>
-              </td>
+      {jobEntries.length === 0 ? (
+        <EmptyState
+          icon={ClipboardList}
+          title="ไม่มีรายละเอียดงาน"
+          description="กรุณาเพิ่มรายการงานเพื่อบันทึกรายละเอียดการปฏิบัติงาน"
+          actionText="เพิ่มรายการงาน"
+          onAction={addJobEntry}
+        />
+      ) : (
+        <table className="dynamic-table">
+          <thead>
+            <tr>
+              <th style={{ width: "60px", textAlign: "center" }}>ลำดับ</th>
+              <th>รายละเอียดการปฏิบัติงาน</th>
+              <th style={{ width: "200px" }}>สถานที่</th>
+              <th style={{ width: "180px" }}>ผู้ดำเนินการ</th>
+              <th style={{ width: "60px" }}></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody ref={tbodyRef}>
+            {jobEntries.map((entry, index) => (
+              <tr key={entry.id}>
+                <td
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "600",
+                    verticalAlign: "top",
+                    paddingTop: "1.5rem",
+                  }}
+                >
+                  {index + 1}
+                </td>
+                <td>
+                  <div className="flex-column">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          fontWeight: "700",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        รายละเอียดงาน:
+                      </span>
+                      <textarea
+                        value={entry.detail}
+                        onChange={(e) =>
+                          handleJobEntryChange(entry.id, "detail", e.target.value)
+                        }
+                        onInput={autoResize}
+                        rows={1}
+                        placeholder="..."
+                        maxLength={500}
+                        style={{ minHeight: "40px", background: "#f8fafc", color: "var(--text-primary)", caretColor: "var(--text-primary)" }}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          fontWeight: "700",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        ผลการดำเนินการ:
+                      </span>
+                      <textarea
+                        value={entry.result}
+                        onChange={(e) =>
+                          handleJobEntryChange(entry.id, "result", e.target.value)
+                        }
+                        onInput={autoResize}
+                        rows={1}
+                        placeholder="..."
+                        maxLength={500}
+                        style={{ minHeight: "40px", background: "#f8fafc", color: "var(--text-primary)", caretColor: "var(--text-primary)" }}
+                      />
+                    </div>
+                  </div>
+                </td>
+                <td style={{ verticalAlign: "top", paddingTop: "1.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      background: "#f8fafc",
+                      padding: "0.25rem 0.5rem",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <MapPin size={14} color="#64748b" />
+                    <textarea
+                      value={entry.location}
+                      onInput={autoResize}
+                      placeholder="กรอกสถานที่..."
+                      onChange={(e) =>
+                        handleJobEntryChange(entry.id, "location", e.target.value)
+                      }
+                      style={{
+  
+                        border: "none",
+                        background: "transparent",
+                        padding: "0.25rem",
+                        color: "var(--text-primary)",
+                        caretColor: "var(--text-primary)",
+                      }}
+                    />
+                  </div>
+                </td>
+                <td style={{ verticalAlign: "top", paddingTop: "1.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      background: "#f8fafc",
+                      padding: "0.25rem 0.5rem",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <User size={14} color="#64748b" />
+                    <textarea
+                      value={entry.executor}
+                      onInput={autoResize}
+                      placeholder="กรอกผู้ดำเนินการ..."
+                      onChange={(e) =>
+                        handleJobEntryChange(entry.id, "executor", e.target.value)
+                      }
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        padding: "0.25rem",
+                        color: "var(--text-primary)",
+                        caretColor: "var(--text-primary)",
+                      }}
+                    />
+                  </div>
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    verticalAlign: "top",
+                    paddingTop: "1.5rem",
+                  }}
+                >
+                  <button
+                    className="btn btn-danger"
+                    style={{
+                      padding: "0.4rem",
+                      border: "none",
+                      background: "transparent",
+                    }}
+                    onClick={() => removeJobEntry(entry.id)}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </>
   );
 }

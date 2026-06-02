@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Calendar, Plus, MapPin, Trash2 } from "lucide-react";
+import { Calendar, Plus, MapPin, Trash2, Map } from "lucide-react";
+import EmptyState from "./EmptyState";
 
 export default function ProjectPlanSection({
   plans,
@@ -84,168 +85,178 @@ export default function ProjectPlanSection({
         </button>
       </div>
 
-      <table className="dynamic-table">
-        <thead>
-          <tr>
-            <th style={{ width: "40%" }}>สถานที่ / รายละเอียดงาน</th>
-            <th>วันที่เริ่ม</th>
-            <th>วันที่สิ้นสุด</th>
-            <th style={{ textAlign: "center" }}>ผ่านมาแล้ว</th>
-            <th style={{ textAlign: "center" }}>คงเหลือ</th>
-            <th style={{ width: "80px", textAlign: "center" }}></th>
-          </tr>
-        </thead>
-        <tbody ref={tbodyRef}>
-          {plans.map((plan) => (
-            <React.Fragment key={plan.id}>
-              <tr style={{ backgroundColor: "#f8fafc" }}>
-                <td colSpan={5}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    <MapPin size={14} color="var(--primary-color)" />
-                    <textarea
-                      value={plan.locationName}
-                      onChange={(e) =>
-                        handlePlanChange(plan.id, "locationName", e.target.value)
-                      }
-                      onInput={autoResize}
-                      rows={1}
-                      placeholder="ระบุสถานที่..."
+      {plans.length === 0 ? (
+        <EmptyState
+          icon={Map}
+          title="ไม่มีสถานที่และแผนงาน"
+          description="กรุณาเพิ่มสถานที่เพื่อเริ่มต้นวางแผนงานสำหรับโครงการนี้"
+          actionText="เพิ่มสถานที่"
+          onAction={addLocation}
+        />
+      ) : (
+        <table className="dynamic-table">
+          <thead>
+            <tr>
+              <th style={{ width: "40%" }}>สถานที่ / รายละเอียดงาน</th>
+              <th>วันที่เริ่ม</th>
+              <th>วันที่สิ้นสุด</th>
+              <th style={{ textAlign: "center" }}>ผ่านมาแล้ว</th>
+              <th style={{ textAlign: "center" }}>คงเหลือ</th>
+              <th style={{ width: "80px", textAlign: "center" }}></th>
+            </tr>
+          </thead>
+          <tbody ref={tbodyRef}>
+            {plans.map((plan) => (
+              <React.Fragment key={plan.id}>
+                <tr style={{ backgroundColor: "#f8fafc" }}>
+                  <td colSpan={5}>
+                    <div
                       style={{
-                        fontWeight: "600",
-                        border: "none",
-                        background: "transparent",
-                        width: "100%",
-                        minHeight: "24px",
-                        padding: "0.25rem 0.5rem",
-                        resize: "none",
-                        overflow: "hidden",
-                        color: "var(--text-primary)",
-                        caretColor: "var(--text-primary)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
                       }}
-                    />
-                  </div>
-                </td>
-                <td style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.25rem",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <button
-                      className="btn btn-success"
-                      style={{ padding: "0.4rem", borderRadius: "6px" }}
-                      onClick={() => addTask(plan.id)}
-                      title="Add Task"
                     >
-                      <Plus size={14} />
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      style={{ padding: "0.4rem", borderRadius: "6px" }}
-                      onClick={() => removeLocation(plan.id)}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              {plan.tasks.map((task) => (
-                <tr key={task.id}>
-                  <td style={{ paddingLeft: "2.5rem" }}>
-                    <textarea
-                      value={task.name}
-                      onChange={(e) =>
-                        handleTaskChange(plan.id, task.id, "name", e.target.value)
-                      }
-                      onInput={autoResize}
-                      rows={1}
-                      placeholder="ระบุรายละเอียดงาน..."
-                      style={{
-                        width: "100%",
-                        border: "none",
-                        background: "transparent",
-                        minHeight: "24px",
-                        padding: "0.25rem 0.5rem",
-                        resize: "none",
-                        overflow: "hidden",
-                        color: "var(--text-primary)",
-                        caretColor: "var(--text-primary)",
-                      }}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      value={task.startDate}
-                      max={formData.workDate}
-                      onChange={(e) =>
-                        handleTaskChange(
-                          plan.id,
-                          task.id,
-                          "startDate",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      value={task.endDate}
-                      min={!task.startDate || formData.workDate > task.startDate ? formData.workDate : task.startDate}
-                      onChange={(e) =>
-                        handleTaskChange(
-                          plan.id,
-                          task.id,
-                          "endDate",
-                          e.target.value
-                        )
-                      }
-                    />
+                      <MapPin size={14} color="var(--primary-color)" />
+                      <textarea
+                        value={plan.locationName}
+                        onChange={(e) =>
+                          handlePlanChange(plan.id, "locationName", e.target.value)
+                        }
+                        onInput={autoResize}
+                        rows={1}
+                        placeholder="ระบุสถานที่..."
+                        style={{
+                          fontWeight: "600",
+                          border: "none",
+                          background: "transparent",
+                          width: "100%",
+                          minHeight: "24px",
+                          padding: "0.25rem 0.5rem",
+                          resize: "none",
+                          overflow: "hidden",
+                          color: "var(--text-primary)",
+                          caretColor: "var(--text-primary)",
+                        }}
+                      />
+                    </div>
                   </td>
                   <td style={{ textAlign: "center" }}>
-                    <span className="days-badge">
-                      {getDaysDiff(task.startDate, formData.workDate)}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: "center" }}>
-                    <span
-                      className={`days-badge ${getDaysDiff(formData.workDate, task.endDate) < 3
-                        ? "danger"
-                        : ""
-                        }`}
-                    >
-                      {getDaysDiff(formData.workDate, task.endDate)}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: "center" }}>
-                    <button
-                      className="btn btn-danger"
+                    <div
                       style={{
-                        padding: "0.4rem",
-                        borderRadius: "6px",
-                        background: "transparent",
-                        border: "none",
+                        display: "flex",
+                        gap: "0.25rem",
+                        justifyContent: "center",
                       }}
-                      onClick={() => removeTask(plan.id, task.id)}
                     >
-                      <Trash2 size={14} />
-                    </button>
+                      <button
+                        className="btn btn-success"
+                        style={{ padding: "0.4rem", borderRadius: "6px" }}
+                        onClick={() => addTask(plan.id)}
+                        title="Add Task"
+                      >
+                        <Plus size={14} />
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        style={{ padding: "0.4rem", borderRadius: "6px" }}
+                        onClick={() => removeLocation(plan.id)}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              ))}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+                {plan.tasks.map((task) => (
+                  <tr key={task.id}>
+                    <td style={{ paddingLeft: "2.5rem" }}>
+                      <textarea
+                        value={task.name}
+                        onChange={(e) =>
+                          handleTaskChange(plan.id, task.id, "name", e.target.value)
+                        }
+                        onInput={autoResize}
+                        rows={1}
+                        placeholder="ระบุรายละเอียดงาน..."
+                        style={{
+                          width: "100%",
+                          border: "none",
+                          background: "transparent",
+                          minHeight: "24px",
+                          padding: "0.25rem 0.5rem",
+                          resize: "none",
+                          overflow: "hidden",
+                          color: "var(--text-primary)",
+                          caretColor: "var(--text-primary)",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        value={task.startDate}
+                        max={formData.workDate}
+                        onChange={(e) =>
+                          handleTaskChange(
+                            plan.id,
+                            task.id,
+                            "startDate",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        value={task.endDate}
+                        min={!task.startDate || formData.workDate > task.startDate ? formData.workDate : task.startDate}
+                        onChange={(e) =>
+                          handleTaskChange(
+                            plan.id,
+                            task.id,
+                            "endDate",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      <span className="days-badge">
+                        {getDaysDiff(task.startDate, formData.workDate)}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      <span
+                        className={`days-badge ${getDaysDiff(formData.workDate, task.endDate) < 3
+                          ? "danger"
+                          : ""
+                          }`}
+                      >
+                        {getDaysDiff(formData.workDate, task.endDate)}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      <button
+                        className="btn btn-danger"
+                        style={{
+                          padding: "0.4rem",
+                          borderRadius: "6px",
+                          background: "transparent",
+                          border: "none",
+                        }}
+                        onClick={() => removeTask(plan.id, task.id)}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      )}
     </>
   );
 }
